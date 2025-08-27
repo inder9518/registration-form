@@ -8,19 +8,20 @@
     body {
       font-family: Arial, sans-serif;
       background: linear-gradient(to right, #4facfe, #00f2fe);
+      margin: 0;
+      padding: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
-      margin: 0;
+      height: 100vh;
     }
     .container {
       background: #fff;
-      padding: 30px;
+      padding: 20px;
       border-radius: 15px;
       box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 500px;
+      width: 90%;
+      max-width: 400px;
     }
     h2 {
       text-align: center;
@@ -103,17 +104,22 @@
     const form = document.getElementById("regForm");
     const successBox = document.getElementById("successBox");
 
-    // यहाँ अपने Google Apps Script का Web App URL डालें
-    const SCRIPT_URL = "PASTE_YOUR_WEB_APP_URL_HERE";
+    function getData() {
+      return JSON.parse(localStorage.getItem("formData")) || [];
+    }
 
-    form.addEventListener("submit", async (e) => {
+    function saveData(data) {
+      const allData = getData();
+      allData.push(data);
+      localStorage.setItem("formData", JSON.stringify(allData));
+    }
+
+    form.addEventListener("submit", (e) => {
       e.preventDefault();
-      if (!form.checkValidity()) {
-        form.reportValidity();
-        return;
-      }
+      const today = new Date().toISOString().split("T")[0];
 
-      const data = {
+      const formData = {
+        date: today,
         name: form.name.value.trim(),
         phone: form.phone.value.trim(),
         email: form.email.value.trim(),
@@ -122,25 +128,12 @@
         dob: form.dob.value
       };
 
-      try {
-        const res = await fetch(SCRIPT_URL, {
-          method: "POST",
-          body: JSON.stringify(data),
-          headers: { "Content-Type": "application/json" }
-        });
-
-        if (res.ok) {
-          successBox.style.display = "block";
-          setTimeout(() => {
-            successBox.style.display = "none";
-            form.reset();
-          }, 3000);
-        } else {
-          alert("❌ डेटा सेव करने में दिक्कत आई!");
-        }
-      } catch (error) {
-        alert("⚠️ कनेक्शन एरर: " + error.message);
-      }
+      saveData(formData);
+      successBox.style.display = "block";
+      setTimeout(() => {
+        successBox.style.display = "none";
+        form.reset();
+      }, 2000);
     });
   </script>
 </body>

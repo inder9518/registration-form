@@ -5,53 +5,97 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
   <style>
-    body, html {
+    body {
+      font-family: Arial, sans-serif;
+      background: #f0f2f5;
       margin: 0;
       padding: 0;
-      height: 100%;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background: #f0f0f0;
-      font-family: Arial, sans-serif;
+      text-align: center;
     }
-    .center-btn {
-      padding: 15px 30px;
-      font-size: 18px;
-      font-weight: bold;
-      color: white;
-      background-color: #007BFF;
-      border: none;
-      border-radius: 8px;
-      text-decoration: none;
-      transition: 0.3s ease;
+    h1 {
       margin-top: 20px;
-    }
-    .center-btn:hover {
-      background-color: #0056b3;
-      transform: scale(1.05);
     }
     .date-picker {
       padding: 10px;
-      font-size: 18px;
-      border: 1px solid #ccc;
+      font-size: 16px;
+      margin: 20px 0;
       border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    table {
+      margin: 0 auto;
+      border-collapse: collapse;
+      width: 95%;
+      background: #fff;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 10px;
+      text-align: center;
+    }
+    th {
+      background: #4facfe;
+      color: white;
     }
   </style>
 </head>
 <body>
-  <h1>📅 Select Date to View Data</h1>
-  <input type="date" id="selectedDate" class="date-picker" />
-  <a href="form.html" class="center-btn">Go to Registration Form</a>
+  <h1>Dashboard - All Registrations</h1>
+  <input type="date" id="filterDate" class="date-picker">
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Name</th>
+        <th>Phone</th>
+        <th>Email</th>
+        <th>Gender</th>
+        <th>Race</th>
+        <th>DOB</th>
+      </tr>
+    </thead>
+    <tbody id="dataTable"></tbody>
+  </table>
 
   <script>
-    const dateInput = document.getElementById("selectedDate");
-    dateInput.addEventListener("change", () => {
-      alert("आपने चुनी हुई Date: " + dateInput.value);
-      // यहाँ आप इस डेट के हिसाब से Google Sheet से डेटा लोड कर सकते हैं
+    const dataTable = document.getElementById("dataTable");
+    const filterDate = document.getElementById("filterDate");
+
+    function getData() {
+      return JSON.parse(localStorage.getItem("formData")) || [];
+    }
+
+    function displayData(dateFilter = "") {
+      const allData = getData();
+      dataTable.innerHTML = "";
+
+      const filtered = dateFilter
+        ? allData.filter(item => item.date === dateFilter)
+        : allData;
+
+      filtered.forEach(item => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.date}</td>
+          <td>${item.name}</td>
+          <td>${item.phone}</td>
+          <td>${item.email}</td>
+          <td>${item.gender}</td>
+          <td>${item.race}</td>
+          <td>${item.dob}</td>
+        `;
+        dataTable.appendChild(row);
+      });
+    }
+
+    filterDate.addEventListener("change", () => {
+      displayData(filterDate.value);
     });
+
+    displayData();
   </script>
 </body>
 </html>
