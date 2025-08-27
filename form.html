@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="hi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Registration Form</title>
+  <style>
+    :root{
+      --bg:#0f1724;
+      --card:#0b1220;
+      --accent:#2563eb;
+      --muted:#9aa7bf;
+      --white:#e6eef8;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;
+      font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background:linear-gradient(180deg,var(--bg),#071029);color:var(--white);padding:24px;
+    }
+    .card{
+      width:100%;max-width:760px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+      border-radius:12px;padding:28px;box-shadow:0 8px 30px rgba(2,6,23,0.6);backdrop-filter:blur(6px);
+    }
+    h1{margin:0 0 10px;font-size:22px}
+    p.lead{margin:0 0 18px;color:var(--muted)}
+
+    form{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+    label{display:block;font-size:13px;margin-bottom:6px;color:var(--muted)}
+    input[type="text"],input[type="email"],input[type="tel"],input[type="date"]{
+      width:100%;padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);
+      background:transparent;color:var(--white);font-size:15px;outline:none;transition:box-shadow .12s;
+    }
+    input:focus{box-shadow:0 4px 20px rgba(37,99,235,0.12);border-color:rgba(37,99,235,0.9)}
+
+    .full{grid-column:1/-1}
+    .gender-row{display:flex;gap:12px;align-items:center}
+    .gender-row label{margin:0;color:var(--muted);font-size:14px}
+    .radio-label{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.02)}
+
+    .note{font-size:13px;color:var(--muted);grid-column:1/-1}
+
+    .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:6px;grid-column:1/-1}
+    button{background:var(--accent);color:white;border:0;padding:10px 14px;border-radius:10px;font-weight:600;cursor:pointer}
+    button.secondary{background:transparent;border:1px solid rgba(255,255,255,0.06)}
+
+    @media (max-width:640px){form{grid-template-columns:1fr} .actions{justify-content:stretch} .actions button{width:100%}}
+
+    .invalid{border-color:#ef4444 !important}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Registration Form</h1>
+    <p class="lead">Kripya neeche ka form bhar kar submit karein.</p>
+
+    <form id="regForm" novalidate>
+      <div class="full">
+        <label for="name">Naam</label>
+        <input id="name" name="name" type="text" placeholder="Aapka poora naam" required />
+      </div>
+
+      <div>
+        <label>Gender</label>
+        <div class="gender-row">
+          <label class="radio-label"><input type="radio" name="gender" value="Male" required /> Male</label>
+          <label class="radio-label"><input type="radio" name="gender" value="Female" /> Female</label>
+          <label class="radio-label"><input type="radio" name="gender" value="Other" /> Other</label>
+        </div>
+      </div>
+
+      <div>
+        <label for="dob">Date of Birth</label>
+        <input id="dob" name="dob" type="date" required />
+      </div>
+
+      <div>
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" placeholder="example@domain.com" required />
+      </div>
+
+      <div>
+        <label for="phone">Phone Number</label>
+        <input id="phone" name="phone" type="tel" inputmode="numeric" placeholder="10 digit mobile" pattern="^[6-9]\\d{9}$" required />
+      </div>
+
+      <div>
+        <label for="race">Race Category</label>
+        <input id="race" name="race" type="text" placeholder="Apni category likhiye" required />
+      </div>
+
+      <div class="note">Sare fields jahan zaroori bataya gaya hai, required hain.</div>
+
+      <div class="actions">
+        <button type="reset" class="secondary">Reset</button>
+        <button type="submit">Submit</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    // 👇 Aapka Apps Script URL
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwvStQ0YN0gqYE2Gncq-mrhn6sOkV65EgiNtzM2NrxP-v_lE6bZfAWhBFsCFwDc7IPEkQ/exec";
+
+    const form = document.getElementById('regForm');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (!form.checkValidity()) {
+        alert("⚠️ Kripya required fields sahi se bhar dein.");
+        return;
+      }
+
+      const formData = Object.fromEntries(new FormData(form).entries());
+      try {
+        const res = await fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify(formData),
+          headers: { "Content-Type": "application/json" }
+        });
+
+        const result = await res.json();
+        alert("✅ Data Google Sheet me save ho gaya! Row: " + result.row);
+        form.reset();
+      } catch (err) {
+        alert("❌ Submit mein error: " + err);
+      }
+    });
+  </script>
+</body>
+</html>
+
