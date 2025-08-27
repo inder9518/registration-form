@@ -15,8 +15,8 @@
     button:hover { background: #007bff; }
     .create-section { background: white; padding: 15px; margin: 20px auto; border-radius: 10px; width: 90%; box-shadow: 0px 4px 20px rgba(0,0,0,0.1); }
     .data-table-container { margin-top: 15px; }
-    .copy-btn { background: #28a745; margin-bottom: 10px; }
-    .copy-btn:hover { background: #218838; }
+    .download-btn { background: #28a745; margin-bottom: 10px; }
+    .download-btn:hover { background: #218838; }
   </style>
 </head>
 <body>
@@ -88,7 +88,7 @@
       let tableHTML = `<td colspan="3">
         <div class="data-table-container">
           <h3>${eventName} - Total Registrations: ${registrations.length}</h3>
-          <button class="copy-btn" onclick="copyTable(this)">Copy Data</button>
+          <button class="download-btn" onclick="downloadCSV('${eventName}', ${eventIndex})">Download Excel</button>
           <table>
             <thead>
               <tr>
@@ -118,15 +118,20 @@
       btn.closest("tr").after(row);
     }
 
-    function copyTable(button) {
-      const table = button.nextElementSibling;
-      let range = document.createRange();
-      range.selectNode(table);
-      window.getSelection().removeAllRanges();
-      window.getSelection().addRange(range);
-      document.execCommand("copy");
-      window.getSelection().removeAllRanges();
-      alert("Data copied! You can paste in Excel.");
+    function downloadCSV(eventName, eventIndex) {
+      const registrations = getRegistrations().filter(r => r.eventIndex == eventIndex);
+      if (!registrations.length) { alert("No data to download."); return; }
+
+      const header = ["Name", "Email", "Phone", "Gender", "Race/Community", "DOB"];
+      const rows = registrations.map(r => [r.name, r.email, r.phone, r.gender, r.race, r.dob]);
+
+      let csvContent = [header, ...rows].map(e => e.join(",")).join("\n");
+
+      const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = `${eventName}.csv`;
+      link.click();
     }
 
     displayEvents();
