@@ -3,26 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Center Button Page</title>
+  <title>Dashboard</title>
   <style>
     body, html {
       margin: 0;
       padding: 0;
       height: 100%;
       width: 100%;
-    }
-
-    body {
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       background: #f0f0f0;
       font-family: Arial, sans-serif;
     }
-
-    /* Button as link */
     .center-btn {
-      display: inline-block;
       padding: 15px 30px;
       font-size: 18px;
       font-weight: bold;
@@ -30,17 +25,33 @@
       background-color: #007BFF;
       border: none;
       border-radius: 8px;
-      text-decoration: none; /* Remove underline */
+      text-decoration: none;
       transition: 0.3s ease;
+      margin-top: 20px;
     }
-
     .center-btn:hover {
       background-color: #0056b3;
       transform: scale(1.05);
     }
+    .date-picker {
+      padding: 10px;
+      font-size: 18px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+    }
   </style>
 </head>
 <body>
-  <a href="form.html" class="center-btn">Go to Page 2</a>
+  <h1>📅 Select Date to View Data</h1>
+  <input type="date" id="selectedDate" class="date-picker" />
+  <a href="form.html" class="center-btn">Go to Registration Form</a>
+
+  <script>
+    const dateInput = document.getElementById("selectedDate");
+    dateInput.addEventListener("change", () => {
+      alert("आपने चुनी हुई Date: " + dateInput.value);
+      // यहाँ आप इस डेट के हिसाब से Google Sheet से डेटा लोड कर सकते हैं
+    });
+  </script>
 </body>
 </html>
