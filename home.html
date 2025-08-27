@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard - Events</title>
+  <title>Event Dashboard</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -61,14 +61,12 @@
       margin: auto;
       box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
     }
-    .link {
-      display: inline-block;
-      margin-top: 20px;
-      font-size: 18px;
+    a {
       color: #007bff;
       text-decoration: none;
+      font-weight: bold;
     }
-    .link:hover {
+    a:hover {
       text-decoration: underline;
     }
   </style>
@@ -92,8 +90,6 @@
     </thead>
     <tbody id="eventTable"></tbody>
   </table>
-
-  <a href="form.html" class="link">Go to Registration Form →</a>
 
   <script>
     const eventTable = document.getElementById("eventTable");
@@ -130,7 +126,7 @@
       events.forEach((event, index) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td>${event.name}</td>
+          <td><a href="register.html?event=${encodeURIComponent(event.name)}">${event.name}</a></td>
           <td>${event.date}</td>
           <td><button class="delete-btn" onclick="deleteEvent(${index})">Delete</button></td>
         `;
