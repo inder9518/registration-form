@@ -6,19 +6,26 @@
 <title>Admin - Events</title>
 <style>
   body { font-family: Arial, sans-serif; background: #f4f4f9; margin: 0; padding: 0; text-align: center; }
-  h1 { margin: 20px 0; }
-  .top-btn { display: block; width: 200px; margin: 20px auto; padding: 10px; background: #4facfe; color: white; border: none; border-radius: 8px; text-decoration: none; font-weight: bold; }
+  h1 { margin: 20px 0; font-size: 1.5em; }
+  .top-btn { display: block; width: 90%; max-width: 250px; margin: 10px auto; padding: 10px; background: #4facfe; color: white; border: none; border-radius: 8px; text-decoration: none; font-weight: bold; }
   .top-btn:hover { background: #007bff; }
-  .filter-section, .create-section { background: white; padding: 15px; margin: 20px auto; border-radius: 10px; width: 90%; box-shadow: 0px 4px 20px rgba(0,0,0,0.1); }
-  .container { width: 90%; margin: auto; }
-  table { border-collapse: collapse; width: 100%; background: #fff; box-shadow: 0px 4px 20px rgba(0,0,0,0.1); margin-bottom: 20px; }
-  th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+  .filter-section, .create-section { background: white; padding: 15px; margin: 10px auto; border-radius: 10px; width: 95%; max-width: 500px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+  .container { width: 95%; margin: auto; overflow-x: auto; }
+  table { border-collapse: collapse; width: 100%; background: #fff; box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin-bottom: 20px; min-width: 600px; }
+  th, td { border: 1px solid #ddd; padding: 8px; text-align: center; font-size: 0.9em; }
   th { background: #4facfe; color: white; }
-  button { padding: 6px 12px; border: none; background: #4facfe; color: white; font-size: 14px; border-radius: 6px; cursor: pointer; transition: 0.3s; }
+  button { padding: 5px 10px; border: none; background: #4facfe; color: white; font-size: 12px; border-radius: 6px; cursor: pointer; transition: 0.3s; margin: 2px; }
   button:hover { background: #007bff; }
-  .data-table-container { margin-top: 15px; }
   .download-btn { background: #28a745; margin-bottom: 10px; }
   .download-btn:hover { background: #218838; }
+  .data-table-container { margin-top: 10px; overflow-x: auto; }
+  
+  /* Responsive for mobile */
+  @media screen and (max-width: 600px){
+    th, td { font-size: 0.8em; padding: 6px; }
+    .top-btn { font-size: 14px; padding: 8px; }
+    button { font-size: 10px; padding: 4px 6px; }
+  }
 </style>
 </head>
 <body>
@@ -98,7 +105,7 @@ function displayEvents(){
   const filterDate=document.getElementById("filterDate").value;
 
   events.forEach((event,idx)=>{
-    if(filterDate && event.date !== filterDate) return; // Filter by date
+    if(filterDate && event.date !== filterDate) return;
 
     const row=document.createElement("tr");
     row.innerHTML=`
