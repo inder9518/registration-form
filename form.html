@@ -72,6 +72,9 @@
   <div class="container">
     <h2>Registration Form</h2>
     <form id="regForm">
+      <label for="bib">Bib Number</label>
+      <input type="text" id="bib" name="bib" required placeholder="Enter bib number" />
+
       <label for="name">Full Name</label>
       <input type="text" id="name" name="name" required placeholder="Enter full name" />
 
@@ -120,6 +123,7 @@
 
       const formData = {
         date: today,
+        bib: form.bib.value.trim(),
         name: form.name.value.trim(),
         phone: form.phone.value.trim(),
         email: form.email.value.trim(),
