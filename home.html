@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
+  <title>Dashboard - Events</title>
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -13,11 +13,6 @@
       text-align: center;
     }
     h1 {
-      margin-top: 20px;
-    }
-    .container {
-      width: 90%;
-      margin: auto;
       margin-top: 20px;
     }
     input, button {
@@ -30,7 +25,7 @@
     table {
       margin: 20px auto;
       border-collapse: collapse;
-      width: 95%;
+      width: 90%;
       background: #fff;
       border-radius: 10px;
       overflow: hidden;
@@ -69,25 +64,6 @@
   </style>
 </head>
 <body>
-  <h1>Dashboard - All Registrations</h1>
-  
-  <table>
-    <thead>
-      <tr>
-        <th>Date</th>
-        <th>Bib Number</th>
-        <th>Name</th>
-        <th>Phone</th>
-        <th>Email</th>
-        <th>Gender</th>
-        <th>Race</th>
-        <th>DOB</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="dataTable"></tbody>
-  </table>
-
   <h1>Create Event</h1>
   <div class="create-section">
     <input type="text" id="eventName" placeholder="Event Name">
@@ -108,44 +84,8 @@
   </table>
 
   <script>
-    const dataTable = document.getElementById("dataTable");
     const eventTable = document.getElementById("eventTable");
 
-    // Get Registrations
-    function getData() {
-      return JSON.parse(localStorage.getItem("formData")) || [];
-    }
-    function saveData(data) {
-      localStorage.setItem("formData", JSON.stringify(data));
-    }
-    function deleteEntry(index) {
-      const allData = getData();
-      allData.splice(index, 1);
-      saveData(allData);
-      displayData();
-    }
-    function displayData() {
-      const allData = getData();
-      dataTable.innerHTML = "";
-
-      allData.forEach((item, idx) => {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${item.date}</td>
-          <td>${item.bib}</td>
-          <td>${item.name}</td>
-          <td>${item.phone}</td>
-          <td>${item.email}</td>
-          <td>${item.gender}</td>
-          <td>${item.race}</td>
-          <td>${item.dob}</td>
-          <td><button class="delete-btn" onclick="deleteEntry(${idx})">Delete</button></td>
-        `;
-        dataTable.appendChild(row);
-      });
-    }
-
-    // Event Functions
     function getEvents() {
       return JSON.parse(localStorage.getItem("events")) || [];
     }
@@ -185,9 +125,6 @@
         eventTable.appendChild(row);
       });
     }
-
-    // Initial Load
-    displayData();
     displayEvents();
   </script>
 </body>
