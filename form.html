@@ -32,21 +32,14 @@
   </form>
 
   <script>
-    function getEvents() {
-      return JSON.parse(localStorage.getItem("events")) || [];
-    }
-    function getRegistrations() {
-      return JSON.parse(localStorage.getItem("registrations")) || [];
-    }
-    function saveRegistrations(data) {
-      localStorage.setItem("registrations", JSON.stringify(data));
-    }
+    function getEvents() { return JSON.parse(localStorage.getItem("events")) || []; }
+    function getRegistrations() { return JSON.parse(localStorage.getItem("registrations")) || []; }
+    function saveRegistrations(data) { localStorage.setItem("registrations", JSON.stringify(data)); }
 
     function loadEvents() {
       const events = getEvents();
       const eventSelect = document.getElementById("eventSelect");
       eventSelect.innerHTML = "<option value=''>Select Event</option>";
-
       events.forEach((event, idx) => {
         const option = document.createElement("option");
         option.value = idx;
@@ -65,12 +58,10 @@
         email: document.getElementById("email").value,
         gender: document.getElementById("gender").value,
         race: document.getElementById("race").value,
-        dob: document.getElementById("dob").value,
+        dob: document.getElementById("dob").value
       };
-
       registrations.push(registration);
       saveRegistrations(registrations);
-
       alert("Registration Successful!");
       document.getElementById("registrationForm").reset();
     });
