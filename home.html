@@ -15,15 +15,20 @@
     h1 {
       margin-top: 20px;
     }
-    .date-picker {
+    .container {
+      width: 90%;
+      margin: auto;
+      margin-top: 20px;
+    }
+    .date-picker, input, button {
       padding: 10px;
       font-size: 16px;
-      margin: 20px 0;
+      margin: 5px;
       border-radius: 8px;
       border: 1px solid #ccc;
     }
     table {
-      margin: 0 auto;
+      margin: 20px auto;
       border-collapse: collapse;
       width: 95%;
       background: #fff;
@@ -53,10 +58,19 @@
     button.delete-btn:hover {
       background: #e60000;
     }
+    .create-section {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      width: 90%;
+      margin: auto;
+      box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
+    }
   </style>
 </head>
 <body>
   <h1>Dashboard - All Registrations</h1>
+  
   <input type="date" id="filterDate" class="date-picker">
   <table>
     <thead>
@@ -75,35 +89,50 @@
     <tbody id="dataTable"></tbody>
   </table>
 
+  <h1>Create Event</h1>
+  <div class="create-section">
+    <input type="text" id="eventName" placeholder="Event Name">
+    <input type="date" id="eventDate">
+    <button onclick="addEvent()">Create Event</button>
+  </div>
+
+  <h1>All Events</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>Event Name</th>
+        <th>Event Date</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody id="eventTable"></tbody>
+  </table>
+
   <script>
     const dataTable = document.getElementById("dataTable");
     const filterDate = document.getElementById("filterDate");
+    const eventTable = document.getElementById("eventTable");
 
+    // Get Registrations
     function getData() {
       return JSON.parse(localStorage.getItem("formData")) || [];
     }
-
     function saveData(data) {
       localStorage.setItem("formData", JSON.stringify(data));
     }
-
     function deleteEntry(index) {
       const allData = getData();
-      allData.splice(index, 1); // Index से हटाओ
+      allData.splice(index, 1);
       saveData(allData);
-      displayData(filterDate.value); // फिर से डेटा दिखाओ
+      displayData(filterDate.value);
     }
-
     function displayData(dateFilter = "") {
       const allData = getData();
       dataTable.innerHTML = "";
-
-      const filtered = dateFilter
-        ? allData.filter(item => item.date === dateFilter)
-        : allData;
+      const filtered = dateFilter ? allData.filter(item => item.date === dateFilter) : allData;
 
       filtered.forEach((item, idx) => {
-        const actualIndex = allData.indexOf(item); // असली इंडेक्स निकालो
+        const actualIndex = allData.indexOf(item);
         const row = document.createElement("tr");
         row.innerHTML = `
           <td>${item.date}</td>
@@ -120,11 +149,50 @@
       });
     }
 
-    filterDate.addEventListener("change", () => {
-      displayData(filterDate.value);
-    });
+    // Event Functions
+    function getEvents() {
+      return JSON.parse(localStorage.getItem("events")) || [];
+    }
+    function saveEvents(events) {
+      localStorage.setItem("events", JSON.stringify(events));
+    }
+    function addEvent() {
+      const name = document.getElementById("eventName").value;
+      const date = document.getElementById("eventDate").value;
+      if (!name || !date) {
+        alert("Please enter Event Name and Date!");
+        return;
+      }
+      const events = getEvents();
+      events.push({ name, date });
+      saveEvents(events);
+      displayEvents();
+      document.getElementById("eventName").value = "";
+      document.getElementById("eventDate").value = "";
+    }
+    function deleteEvent(index) {
+      const events = getEvents();
+      events.splice(index, 1);
+      saveEvents(events);
+      displayEvents();
+    }
+    function displayEvents() {
+      const events = getEvents();
+      eventTable.innerHTML = "";
+      events.forEach((event, index) => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${event.name}</td>
+          <td>${event.date}</td>
+          <td><button class="delete-btn" onclick="deleteEvent(${index})">Delete</button></td>
+        `;
+        eventTable.appendChild(row);
+      });
+    }
 
+    filterDate.addEventListener("change", () => displayData(filterDate.value));
     displayData();
+    displayEvents();
   </script>
 </body>
 </html>
