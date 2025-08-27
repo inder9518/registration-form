@@ -7,15 +7,15 @@
 <style>
   body { font-family: Arial, sans-serif; background: #f4f4f9; margin: 0; padding: 0; text-align: center; }
   h1 { margin: 20px 0; }
-  .top-btn { display: block; width: 200px; margin: 20px auto; padding: 10px; background: #4facfe; color: white; border: none; border-radius: 8px; text-align: center; text-decoration: none; font-weight: bold; }
+  .top-btn { display: block; width: 200px; margin: 20px auto; padding: 10px; background: #4facfe; color: white; border: none; border-radius: 8px; text-decoration: none; font-weight: bold; }
   .top-btn:hover { background: #007bff; }
+  .filter-section, .create-section { background: white; padding: 15px; margin: 20px auto; border-radius: 10px; width: 90%; box-shadow: 0px 4px 20px rgba(0,0,0,0.1); }
   .container { width: 90%; margin: auto; }
   table { border-collapse: collapse; width: 100%; background: #fff; box-shadow: 0px 4px 20px rgba(0,0,0,0.1); margin-bottom: 20px; }
   th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
   th { background: #4facfe; color: white; }
   button { padding: 6px 12px; border: none; background: #4facfe; color: white; font-size: 14px; border-radius: 6px; cursor: pointer; transition: 0.3s; }
   button:hover { background: #007bff; }
-  .create-section { background: white; padding: 15px; margin: 20px auto; border-radius: 10px; width: 90%; box-shadow: 0px 4px 20px rgba(0,0,0,0.1); }
   .data-table-container { margin-top: 15px; }
   .download-btn { background: #28a745; margin-bottom: 10px; }
   .download-btn:hover { background: #218838; }
@@ -28,6 +28,14 @@
 
 <h1>Admin - Manage Events</h1>
 
+<!-- Filter by Date -->
+<div class="filter-section">
+  <label for="filterDate">Filter Events by Date: </label>
+  <input type="date" id="filterDate" onchange="displayEvents()">
+  <button onclick="clearFilter()">Clear Filter</button>
+</div>
+
+<!-- Add Event Section -->
 <div class="create-section">
   <input type="text" id="eventName" placeholder="Event Name">
   <input type="date" id="eventDate">
@@ -87,7 +95,11 @@ function displayEvents(){
   const events=getEvents();
   const table=document.getElementById("eventTable");
   table.innerHTML="";
+  const filterDate=document.getElementById("filterDate").value;
+
   events.forEach((event,idx)=>{
+    if(filterDate && event.date !== filterDate) return; // Filter by date
+
     const row=document.createElement("tr");
     row.innerHTML=`
       <td>${event.name}</td>
@@ -100,6 +112,11 @@ function displayEvents(){
     `;
     table.appendChild(row);
   });
+}
+
+function clearFilter(){
+  document.getElementById("filterDate").value="";
+  displayEvents();
 }
 
 function showRegistrations(eventIndex,btn){
@@ -120,11 +137,11 @@ function showRegistrations(eventIndex,btn){
       <table border="1" style="width:100%; border-collapse: collapse;">
         <thead>
           <tr>
-            <th>Name</th><th>Email</th><th>Phone</th><th>Gender</th><th>Race</th><th>DOB</th>
+            <th>Name</th><th>Email</th><th>Phone</th><th>Gender</th><th>Race</th><th>DOB</th><th>Delete</th>
           </tr>
         </thead>
         <tbody>
-          ${registrations.map(r=>`
+          ${registrations.map((r,i)=>`
             <tr>
               <td>${r.name}</td>
               <td>${r.email}</td>
@@ -132,6 +149,7 @@ function showRegistrations(eventIndex,btn){
               <td>${r.gender}</td>
               <td>${r.race}</td>
               <td>${r.dob}</td>
+              <td><button onclick="deleteRegistration(${eventIndex},${i})">Delete</button></td>
             </tr>
           `).join("")}
         </tbody>
@@ -141,6 +159,18 @@ function showRegistrations(eventIndex,btn){
 
   row.innerHTML=tableHTML;
   btn.closest("tr").after(row);
+}
+
+function deleteRegistration(eventIndex, regIndex){
+  if(!confirm("Delete this registration?")) return;
+  const registrations=getRegistrations();
+  const filtered=registrations.filter(r=>r.eventIndex==eventIndex);
+  const globalIndex=registrations.indexOf(filtered[regIndex]);
+  if(globalIndex>-1){
+    registrations.splice(globalIndex,1);
+    localStorage.setItem("registrations", JSON.stringify(registrations));
+    displayEvents();
+  }
 }
 
 function downloadCSV(eventName,eventIndex){
