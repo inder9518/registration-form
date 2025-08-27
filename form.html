@@ -1,156 +1,146 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>स्टाइलिश रजिस्ट्रेशन फॉर्म</title>
+  <title>Registration Form</title>
   <style>
-    /* ==== Reset & Base ==== */
-    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #4f46e5, #06b6d4);
-      display: flex; justify-content: center; align-items: center;
-      min-height: 100vh; padding: 20px;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #4facfe, #00f2fe);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
     }
-
-    /* ==== Card Style ==== */
-    .form-container {
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 20px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.25);
-      backdrop-filter: blur(10px);
+    .container {
+      background: #fff;
       padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
       width: 100%;
-      max-width: 450px;
-      color: #fff;
+      max-width: 500px;
     }
-    .form-container h2 {
+    h2 {
       text-align: center;
-      font-size: 26px;
-      margin-bottom: 10px;
-      letter-spacing: 1px;
+      margin-bottom: 20px;
+      color: #333;
     }
-    .form-container p {
-      text-align: center;
-      color: #d1d5db;
-      margin-bottom: 25px;
-      font-size: 14px;
-    }
-
-    /* ==== Inputs ==== */
     label {
+      font-weight: bold;
       display: block;
-      font-size: 14px;
-      margin-bottom: 6px;
-      color: #e0e7ff;
+      margin-top: 10px;
     }
-    input[type="text"], input[type="email"], input[type="tel"], 
-    input[type="date"], select {
-      width: 100%; padding: 12px 14px;
-      border: none; border-radius: 12px;
-      background: rgba(255,255,255,0.2);
-      color: #fff; font-size: 15px;
-      outline: none;
-      transition: all 0.3s ease;
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
     }
-    input:focus, select:focus {
-      background: rgba(255,255,255,0.3);
-      box-shadow: 0 0 0 2px #06b6d4;
-    }
-
-    /* ==== Gender Radio ==== */
-    .radio-group {
-      display: flex; gap: 15px; margin-top: 6px;
-    }
-    .radio-group label {
-      font-size: 15px;
-      display: flex; align-items: center;
-      gap: 6px;
-    }
-    input[type="radio"] {
-      accent-color: #06b6d4;
-      width: 16px; height: 16px;
-    }
-
-    /* ==== Button ==== */
     button {
-      width: 100%; padding: 12px;
-      border: none; border-radius: 12px;
-      background: linear-gradient(135deg, #06b6d4, #4f46e5);
-      color: #fff; font-weight: bold; font-size: 16px;
+      width: 100%;
+      padding: 12px;
       margin-top: 20px;
+      border: none;
+      background: #4facfe;
+      color: white;
+      font-size: 18px;
+      border-radius: 8px;
       cursor: pointer;
-      transition: transform 0.2s ease, opacity 0.3s ease;
+      transition: background 0.3s;
     }
-    button:hover { transform: scale(1.03); opacity: 0.9; }
-
-    /* ==== Success Message ==== */
+    button:hover {
+      background: #00c6ff;
+    }
     .success {
       display: none;
-      background: rgba(34,197,94,0.25);
-      color: #bbf7d0;
-      padding: 10px;
-      border-radius: 12px;
-      margin-top: 15px;
       text-align: center;
-      font-size: 14px;
+      padding: 10px;
+      margin-top: 15px;
+      background: #d4edda;
+      color: #155724;
+      border-radius: 8px;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
-  <div class="form-container">
-    <h2>रजिस्ट्रेशन फॉर्म</h2>
-    <p>अपनी जानकारी नीचे दर्ज करें</p>
-
+  <div class="container">
+    <h2>Registration Form</h2>
     <form id="regForm">
-      <label for="name">पूरा नाम *</label>
-      <input type="text" id="name" name="name" placeholder="राम कुमार" required>
+      <label for="name">Full Name</label>
+      <input type="text" id="name" name="name" required placeholder="Enter full name" />
 
-      <label for="phone">मोबाइल नंबर *</label>
-      <input type="tel" id="phone" name="phone" placeholder="10 अंकों का नंबर" pattern="[0-9]{10}" required>
+      <label for="phone">Phone Number</label>
+      <input type="tel" id="phone" name="phone" required placeholder="Enter 10-digit phone number" pattern="[0-9]{10}" />
 
-      <label for="email">ईमेल *</label>
-      <input type="email" id="email" name="email" placeholder="you@example.com" required>
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required placeholder="Enter email" />
 
-      <label for="dob">जन्मतिथि (DOB) *</label>
-      <input type="date" id="dob" name="dob" required>
+      <label for="gender">Gender</label>
+      <select id="gender" name="gender" required>
+        <option value="" disabled selected>Select Gender</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+      </select>
 
-      <label>लिंग (Gender) *</label>
-      <div class="radio-group">
-        <label><input type="radio" name="gender" value="Male" required> पुरुष</label>
-        <label><input type="radio" name="gender" value="Female"> महिला</label>
-        <label><input type="radio" name="gender" value="Other"> अन्य</label>
-      </div>
+      <label for="race">Race / Community</label>
+      <input type="text" id="race" name="race" placeholder="Enter race/community" required />
 
-      <label for="race">Race / Community *</label>
-      <input type="text" id="race" name="race" placeholder="जैसे: Hindu, Sikh, Muslim" required>
+      <label for="dob">Date of Birth</label>
+      <input type="date" id="dob" name="dob" required />
 
       <button type="submit">Submit</button>
-      <div class="success" id="successBox">✅ फॉर्म सफलतापूर्वक सबमिट हो गया!</div>
     </form>
+    <div class="success" id="successBox">✅ Data submitted successfully!</div>
   </div>
 
   <script>
     const form = document.getElementById("regForm");
     const successBox = document.getElementById("successBox");
 
-    form.addEventListener("submit", (e) => {
+    // 🔹 अपना Google Apps Script का Web App URL यहाँ डालें
+    const SCRIPT_URL = "PASTE_YOUR_WEB_APP_URL_HERE";
+
+    form.addEventListener("submit", async (e) => {
       e.preventDefault();
       if (!form.checkValidity()) {
         form.reportValidity();
         return;
       }
-      const phone = form.phone.value.trim();
-      if (!/^\d{10}$/.test(phone)) {
-        alert("कृपया 10 अंकों का वैध मोबाइल नंबर डालें");
-        return;
+
+      const data = {
+        name: form.name.value.trim(),
+        phone: form.phone.value.trim(),
+        email: form.email.value.trim(),
+        gender: form.gender.value,
+        race: form.race.value.trim(),
+        dob: form.dob.value
+      };
+
+      try {
+        const res = await fetch(SCRIPT_URL, {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: { "Content-Type": "application/json" }
+        });
+
+        if (res.ok) {
+          successBox.style.display = "block";
+          setTimeout(() => {
+            successBox.style.display = "none";
+            form.reset();
+          }, 3000);
+        } else {
+          alert("❌ डेटा सेव करने में दिक्कत आई!");
+        }
+      } catch (error) {
+        alert("⚠️ कनेक्शन एरर: " + error.message);
       }
-      successBox.style.display = "block";
-      setTimeout(() => {
-        successBox.style.display = "none";
-        form.reset();
-      }, 3000);
     });
   </script>
 </body>
