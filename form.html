@@ -5,72 +5,68 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Event Registration</title>
 <style>
-  body { font-family: Arial, sans-serif; background: #f4f4f9; margin: 0; padding: 0; }
-  h1 { text-align: center; margin: 20px; }
-  .top-btn { display: block; width: 200px; margin: 20px auto; padding: 10px; background: #4facfe; color: white; border: none; border-radius: 8px; text-align: center; text-decoration: none; font-weight: bold; }
-  .top-btn:hover { background: #007bff; }
-  form { max-width: 500px; margin: auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-  input, select, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 8px; border: 1px solid #ccc; }
-  button { background: #4facfe; color: white; border: none; cursor: pointer; font-size: 16px; }
-  button:hover { background: #007bff; }
+body{font-family:Arial,sans-serif;background:#f4f4f9;margin:0;padding:0;}
+h1{text-align:center;margin:20px;}
+form{max-width:500px;margin:auto;background:white;padding:20px;border-radius:10px;box-shadow:0 4px 20px rgba(0,0,0,0.1);}
+input,select,button{width:100%;padding:10px;margin:10px 0;border-radius:8px;border:1px solid #ccc;}
+button{background:#4facfe;color:white;border:none;cursor:pointer;font-size:16px;}
+button:hover{background:#007bff;}
+.top-btn{display:block;width:200px;margin:10px auto;padding:10px;background:#4facfe;color:white;text-decoration:none;border-radius:8px;text-align:center;font-weight:bold;}
+.top-btn:hover{background:#007bff;}
 </style>
 </head>
 <body>
 
-<!-- Button to go to Home Page -->
-<a href="home.html" class="top-btn">Go to Home Page</a>
-
+<a href="admin.html" class="top-btn">Go to Admin Page</a>
 <h1>Register for Event</h1>
 <form id="registrationForm">
-  <select id="eventSelect" required></select>
-  <input type="text" id="name" placeholder="Full Name" required>
-  <input type="tel" id="phone" placeholder="Phone" required>
-  <input type="email" id="email" placeholder="Email" required>
-  <select id="gender" required>
-    <option value="">Select Gender</option>
-    <option>Male</option>
-    <option>Female</option>
-    <option>Other</option>
-  </select>
-  <input type="text" id="race" placeholder="Race / Community">
-  <input type="date" id="dob" required>
-  <button type="submit">Register</button>
+<select id="eventSelect" required></select>
+<input type="text" id="name" placeholder="Full Name" required>
+<input type="tel" id="phone" placeholder="Phone" required>
+<input type="email" id="email" placeholder="Email" required>
+<select id="gender" required>
+<option value="">Select Gender</option>
+<option>Male</option>
+<option>Female</option>
+<option>Other</option>
+</select>
+<input type="text" id="race" placeholder="Race / Community">
+<input type="date" id="dob" required>
+<button type="submit">Register</button>
 </form>
 
 <script>
-function getEvents(){ return JSON.parse(localStorage.getItem("events"))||[]; }
-function getRegistrations(){ return JSON.parse(localStorage.getItem("registrations"))||[]; }
-function saveRegistrations(data){ localStorage.setItem("registrations", JSON.stringify(data)); }
+const WEB_APP_URL = "YOUR_WEB_APP_URL"; // Replace with your Google Web App URL
 
-function loadEvents(){
-  const events=getEvents();
-  const eventSelect=document.getElementById("eventSelect");
-  eventSelect.innerHTML="<option value=''>Select Event</option>";
+async function loadEvents(){
+  const res = await fetch(`${WEB_APP_URL}?sheet=Events`);
+  const events = await res.json();
+  const select = document.getElementById("eventSelect");
+  select.innerHTML="<option value=''>Select Event</option>";
   events.forEach((event,idx)=>{
-    const option=document.createElement("option");
-    option.value=idx;
-    option.textContent=`${event.name} (${event.date})`;
-    eventSelect.appendChild(option);
+    const option = document.createElement("option");
+    option.value = idx;
+    option.textContent = `${event.Name} (${event.Date})`;
+    select.appendChild(option);
   });
 }
 
-document.getElementById("registrationForm").addEventListener("submit",function(e){
+document.getElementById("registrationForm").addEventListener("submit", async function(e){
   e.preventDefault();
-  const registrations=getRegistrations();
-  const registration={
-    eventIndex:document.getElementById("eventSelect").value,
-    name:document.getElementById("name").value,
-    phone:document.getElementById("phone").value,
-    email:document.getElementById("email").value,
-    gender:document.getElementById("gender").value,
-    race:document.getElementById("race").value,
-    dob:document.getElementById("dob").value
+  const data = {
+    sheet:"Registrations",
+    EventIndex: document.getElementById("eventSelect").value,
+    Name: document.getElementById("name").value,
+    Phone: document.getElementById("phone").value,
+    Email: document.getElementById("email").value,
+    Gender: document.getElementById("gender").value,
+    Race: document.getElementById("race").value,
+    DOB: document.getElementById("dob").value
   };
-  registrations.push(registration);
-  saveRegistrations(registrations);
-  alert("Registration Successful!");
+  await fetch(WEB_APP_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+  alert("Registration Saved!");
   document.getElementById("registrationForm").reset();
-  loadEvents(); // Refresh event list if needed
+  loadEvents();
 });
 
 loadEvents();
