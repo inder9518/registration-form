@@ -20,7 +20,7 @@
       margin: auto;
       margin-top: 20px;
     }
-    .date-picker, input, button {
+    input, button {
       padding: 10px;
       font-size: 16px;
       margin: 5px;
@@ -71,7 +71,6 @@
 <body>
   <h1>Dashboard - All Registrations</h1>
   
-  <input type="date" id="filterDate" class="date-picker">
   <table>
     <thead>
       <tr>
@@ -110,7 +109,6 @@
 
   <script>
     const dataTable = document.getElementById("dataTable");
-    const filterDate = document.getElementById("filterDate");
     const eventTable = document.getElementById("eventTable");
 
     // Get Registrations
@@ -124,15 +122,13 @@
       const allData = getData();
       allData.splice(index, 1);
       saveData(allData);
-      displayData(filterDate.value);
+      displayData();
     }
-    function displayData(dateFilter = "") {
+    function displayData() {
       const allData = getData();
       dataTable.innerHTML = "";
-      const filtered = dateFilter ? allData.filter(item => item.date === dateFilter) : allData;
 
-      filtered.forEach((item, idx) => {
-        const actualIndex = allData.indexOf(item);
+      allData.forEach((item, idx) => {
         const row = document.createElement("tr");
         row.innerHTML = `
           <td>${item.date}</td>
@@ -143,7 +139,7 @@
           <td>${item.gender}</td>
           <td>${item.race}</td>
           <td>${item.dob}</td>
-          <td><button class="delete-btn" onclick="deleteEntry(${actualIndex})">Delete</button></td>
+          <td><button class="delete-btn" onclick="deleteEntry(${idx})">Delete</button></td>
         `;
         dataTable.appendChild(row);
       });
@@ -190,7 +186,7 @@
       });
     }
 
-    filterDate.addEventListener("change", () => displayData(filterDate.value));
+    // Initial Load
     displayData();
     displayEvents();
   </script>
