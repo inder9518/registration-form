@@ -3,93 +3,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Event Dashboard</title>
+  <title>Events Dashboard</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f0f2f5;
-      margin: 0;
-      padding: 0;
-      text-align: center;
-    }
-    h1 {
-      margin-top: 20px;
-    }
-    input, button {
-      padding: 10px;
-      font-size: 16px;
-      margin: 5px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-    table {
-      margin: 20px auto;
-      border-collapse: collapse;
-      width: 90%;
-      background: #fff;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: center;
-    }
-    th {
-      background: #4facfe;
-      color: white;
-    }
-    button.delete-btn {
-      padding: 6px 12px;
-      border: none;
-      background: #ff4d4d;
-      color: white;
-      font-size: 14px;
-      border-radius: 6px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    button.delete-btn:hover {
-      background: #e60000;
-    }
-    .create-section {
-      background: white;
-      padding: 15px;
-      border-radius: 10px;
-      width: 90%;
-      margin: auto;
-      box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
-    }
-    a {
-      color: #007bff;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
+    body { font-family: Arial, sans-serif; background: #f4f4f9; margin: 0; padding: 0; text-align: center; }
+    h1 { margin: 20px 0; }
+    .container { width: 90%; margin: auto; }
+    table { border-collapse: collapse; width: 100%; background: #fff; box-shadow: 0px 4px 20px rgba(0,0,0,0.1); }
+    th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+    th { background: #4facfe; color: white; }
+    button { padding: 6px 12px; border: none; background: #4facfe; color: white; font-size: 14px; border-radius: 6px; cursor: pointer; transition: 0.3s; }
+    button:hover { background: #007bff; }
+    .create-section { background: white; padding: 15px; margin: 20px auto; border-radius: 10px; width: 90%; box-shadow: 0px 4px 20px rgba(0,0,0,0.1); }
   </style>
 </head>
 <body>
-  <h1>Create Event</h1>
+  <h1>All Events</h1>
   <div class="create-section">
     <input type="text" id="eventName" placeholder="Event Name">
     <input type="date" id="eventDate">
     <button onclick="addEvent()">Create Event</button>
   </div>
 
-  <h1>All Events</h1>
-  <table>
-    <thead>
-      <tr>
-        <th>Event Name</th>
-        <th>Event Date</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody id="eventTable"></tbody>
-  </table>
+  <div class="container">
+    <table>
+      <thead>
+        <tr>
+          <th>Event Name</th>
+          <th>Event Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="eventTable"></tbody>
+    </table>
+  </div>
 
   <script>
     const eventTable = document.getElementById("eventTable");
@@ -103,10 +49,7 @@
     function addEvent() {
       const name = document.getElementById("eventName").value;
       const date = document.getElementById("eventDate").value;
-      if (!name || !date) {
-        alert("Please enter Event Name and Date!");
-        return;
-      }
+      if (!name || !date) { alert("Enter Event Name & Date!"); return; }
       const events = getEvents();
       events.push({ name, date });
       saveEvents(events);
@@ -123,15 +66,22 @@
     function displayEvents() {
       const events = getEvents();
       eventTable.innerHTML = "";
-      events.forEach((event, index) => {
+      events.forEach((event, idx) => {
         const row = document.createElement("tr");
         row.innerHTML = `
-          <td><a href="register.html?event=${encodeURIComponent(event.name)}">${event.name}</a></td>
+          <td>${event.name}</td>
           <td>${event.date}</td>
-          <td><button class="delete-btn" onclick="deleteEvent(${index})">Delete</button></td>
+          <td>
+            <button onclick="viewEvent(${idx})">View</button>
+            <button onclick="deleteEvent(${idx})">Delete</button>
+          </td>
         `;
         eventTable.appendChild(row);
       });
+    }
+    function viewEvent(index) {
+      localStorage.setItem("currentEventIndex", index);
+      window.location.href = "event-data.html";
     }
     displayEvents();
   </script>
