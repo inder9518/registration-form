@@ -47,10 +47,10 @@ function saveEvents(events){ localStorage.setItem("events", JSON.stringify(event
 function getRegistrations(){ return JSON.parse(localStorage.getItem("registrations"))||[]; }
 
 function addEvent(){
-  const name = document.getElementById("eventName").value.trim();
-  const date = document.getElementById("eventDate").value;
+  const name=document.getElementById("eventName").value.trim();
+  const date=document.getElementById("eventDate").value;
   if(!name||!date){ alert("Enter Event Name & Date"); return; }
-  const events = getEvents();
+  const events=getEvents();
   events.push({name,date});
   saveEvents(events);
   displayEvents();
@@ -59,12 +59,11 @@ function addEvent(){
 }
 
 function editEvent(index){
-  const events = getEvents();
-  const newName = prompt("Edit Event Name:", events[index].name);
-  const newDate = prompt("Edit Event Date:", events[index].date);
+  const events=getEvents();
+  const newName=prompt("Edit Event Name:",events[index].name);
+  const newDate=prompt("Edit Event Date:",events[index].date);
   if(newName && newDate){
-    events[index].name=newName.trim();
-    events[index].date=newDate;
+    events[index]={name:newName.trim(),date:newDate};
     saveEvents(events);
     displayEvents();
   }
@@ -72,22 +71,14 @@ function editEvent(index){
 
 function deleteEvent(index){
   if(!confirm("Delete this event?")) return;
-  let events = getEvents();
+  let events=getEvents();
   events.splice(index,1);
   saveEvents(events);
-  // also remove related registrations
-  let registrations=getRegistrations().filter(r=>r.eventIndex!=index);
-  // update remaining eventIndex
-  registrations=registrations.map(r=>{
-    if(r.eventIndex>index) r.eventIndex--;
-    return r;
-  });
-  localStorage.setItem("registrations",JSON.stringify(registrations));
   displayEvents();
 }
 
 function displayEvents(){
-  const events = getEvents();
+  const events=getEvents();
   const table=document.getElementById("eventTable");
   table.innerHTML="";
   events.forEach((event,idx)=>{
@@ -97,8 +88,8 @@ function displayEvents(){
       <td>${event.date}</td>
       <td>
         <button onclick="showRegistrations(${idx},this)">Show Registrations</button>
-        <button onclick="editEvent(${idx})">Edit</button>
-        <button onclick="deleteEvent(${idx})">Delete</button>
+        <button onclick="editEvent(${idx})">Edit Event</button>
+        <button onclick="deleteEvent(${idx})">Delete Event</button>
       </td>
     `;
     table.appendChild(row);
@@ -106,10 +97,10 @@ function displayEvents(){
 }
 
 function showRegistrations(eventIndex,btn){
-  const existing = btn.closest("tr").nextElementSibling;
+  const existing=btn.closest("tr").nextElementSibling;
   if(existing && existing.classList.contains("data-row")) { existing.remove(); return; }
 
-  const registrations = getRegistrations().filter(r=>r.eventIndex==eventIndex);
+  const registrations=getRegistrations().filter(r=>r.eventIndex==eventIndex);
   const events=getEvents();
   const eventName=events[eventIndex].name;
 
@@ -118,16 +109,16 @@ function showRegistrations(eventIndex,btn){
 
   let tableHTML=`<td colspan="3">
     <div class="data-table-container">
-      <h3>${eventName} - Total: ${registrations.length}</h3>
+      <h3>${eventName} - Total Registrations: ${registrations.length}</h3>
       <button class="download-btn" onclick="downloadCSV('${eventName}',${eventIndex})">Download Excel</button>
       <table border="1" style="width:100%; border-collapse: collapse;">
         <thead>
           <tr>
-            <th>Name</th><th>Email</th><th>Phone</th><th>Gender</th><th>Race</th><th>DOB</th><th>Actions</th>
+            <th>Name</th><th>Email</th><th>Phone</th><th>Gender</th><th>Race</th><th>DOB</th>
           </tr>
         </thead>
         <tbody>
-          ${registrations.map((r,i)=>`
+          ${registrations.map(r=>`
             <tr>
               <td>${r.name}</td>
               <td>${r.email}</td>
@@ -135,10 +126,6 @@ function showRegistrations(eventIndex,btn){
               <td>${r.gender}</td>
               <td>${r.race}</td>
               <td>${r.dob}</td>
-              <td>
-                <button onclick="editRegistration(${eventIndex},${i})">Edit</button>
-                <button onclick="deleteRegistration(${eventIndex},${i})">Delete</button>
-              </td>
             </tr>
           `).join("")}
         </tbody>
@@ -150,47 +137,14 @@ function showRegistrations(eventIndex,btn){
   btn.closest("tr").after(row);
 }
 
-function editRegistration(eventIndex, regIndex){
-  const registrations = getRegistrations().filter(r=>r.eventIndex==eventIndex);
-  const globalRegs = getRegistrations();
-  const regGlobalIndex = globalRegs.findIndex(r=>r.eventIndex==eventIndex && r===registrations[regIndex]);
-  if(regGlobalIndex===-1) return;
-
-  const r = globalRegs[regGlobalIndex];
-  const newName = prompt("Name", r.name);
-  const newEmail = prompt("Email", r.email);
-  const newPhone = prompt("Phone", r.phone);
-  const newGender = prompt("Gender", r.gender);
-  const newRace = prompt("Race", r.race);
-  const newDOB = prompt("DOB", r.dob);
-
-  if(newName && newEmail && newPhone && newGender && newDOB){
-    globalRegs[regGlobalIndex]={eventIndex, name:newName,email:newEmail,phone:newPhone,gender:newGender,race:newRace,dob:newDOB};
-    localStorage.setItem("registrations",JSON.stringify(globalRegs));
-    displayEvents();
-  }
-}
-
-function deleteRegistration(eventIndex, regIndex){
-  if(!confirm("Delete this registration?")) return;
-  const registrations = getRegistrations().filter(r=>r.eventIndex==eventIndex);
-  const globalRegs = getRegistrations();
-  const regGlobalIndex = globalRegs.findIndex(r=>r.eventIndex==eventIndex && r===registrations[regIndex]);
-  if(regGlobalIndex===-1) return;
-
-  globalRegs.splice(regGlobalIndex,1);
-  localStorage.setItem("registrations",JSON.stringify(globalRegs));
-  displayEvents();
-}
-
 function downloadCSV(eventName,eventIndex){
-  const regs = getRegistrations().filter(r=>r.eventIndex==eventIndex);
+  const regs=getRegistrations().filter(r=>r.eventIndex==eventIndex);
   if(!regs.length){ alert("No data"); return; }
   const header=["Name","Email","Phone","Gender","Race","DOB"];
-  const rows = regs.map(r=>[r.name,r.email,r.phone,r.gender,r.race,r.dob]);
-  const csvContent = [header,...rows].map(e=>e.join(",")).join("\n");
+  const rows=regs.map(r=>[r.name,r.email,r.phone,r.gender,r.race,r.dob]);
+  const csvContent=[header,...rows].map(e=>e.join(",")).join("\n");
 
-  const blob = new Blob([csvContent],{type:"text/csv;charset=utf-8;"});
+  const blob=new Blob([csvContent],{type:"text/csv;charset=utf-8;"});
   const link=document.createElement("a");
   link.href=URL.createObjectURL(blob);
   link.download=`${eventName}.csv`;
