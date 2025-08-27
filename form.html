@@ -11,21 +11,10 @@
     input, select, button { width: 100%; padding: 10px; margin: 10px 0; border-radius: 8px; border: 1px solid #ccc; }
     button { background: #4facfe; color: white; border: none; cursor: pointer; font-size: 16px; }
     button:hover { background: #007bff; }
-    .event-creator { max-width: 500px; margin: 20px auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
   </style>
 </head>
 <body>
-  <h1>Create Event & Register</h1>
-
-  <!-- Create Event Section -->
-  <div class="event-creator">
-    <h3>Create New Event</h3>
-    <input type="text" id="eventName" placeholder="Event Name">
-    <input type="date" id="eventDate">
-    <button id="createEventBtn">Add Event</button>
-  </div>
-
-  <!-- Registration Form -->
+  <h1>Register for Event</h1>
   <form id="registrationForm">
     <select id="eventSelect" required></select>
     <input type="text" id="name" placeholder="Full Name" required>
@@ -43,15 +32,8 @@
   </form>
 
   <script>
-    const form = document.getElementById("registrationForm");
-    const eventSelect = document.getElementById("eventSelect");
-    const createEventBtn = document.getElementById("createEventBtn");
-
     function getEvents() {
       return JSON.parse(localStorage.getItem("events")) || [];
-    }
-    function saveEvents(data) {
-      localStorage.setItem("events", JSON.stringify(data));
     }
     function getRegistrations() {
       return JSON.parse(localStorage.getItem("registrations")) || [];
@@ -62,47 +44,22 @@
 
     function loadEvents() {
       const events = getEvents();
-      eventSelect.innerHTML = "";
-      if(events.length === 0) {
+      const eventSelect = document.getElementById("eventSelect");
+      eventSelect.innerHTML = "<option value=''>Select Event</option>";
+
+      events.forEach((event, idx) => {
         const option = document.createElement("option");
-        option.textContent = "No events available";
+        option.value = idx;
+        option.textContent = `${event.name} (${event.date})`;
         eventSelect.appendChild(option);
-      } else {
-        events.forEach((event, idx) => {
-          const option = document.createElement("option");
-          option.value = idx;
-          option.textContent = `${event.name} (${event.date})`;
-          eventSelect.appendChild(option);
-        });
-      }
+      });
     }
 
-    createEventBtn.addEventListener("click", () => {
-      const name = document.getElementById("eventName").value;
-      const date = document.getElementById("eventDate").value;
-      if (!name || !date) {
-        alert("Please fill event name and date!");
-        return;
-      }
-      const events = getEvents();
-      events.push({ name, date });
-      saveEvents(events);
-      document.getElementById("eventName").value = "";
-      document.getElementById("eventDate").value = "";
-      loadEvents();
-      alert("Event added successfully!");
-    });
-
-    form.addEventListener("submit", function(e) {
+    document.getElementById("registrationForm").addEventListener("submit", function(e) {
       e.preventDefault();
-      const data = getRegistrations();
-      const eventIndex = eventSelect.value;
-      if(eventIndex === "" || eventIndex === "No events available") {
-        alert("Please create/select an event first!");
-        return;
-      }
+      const registrations = getRegistrations();
       const registration = {
-        eventIndex,
+        eventIndex: document.getElementById("eventSelect").value,
         name: document.getElementById("name").value,
         phone: document.getElementById("phone").value,
         email: document.getElementById("email").value,
@@ -110,10 +67,12 @@
         race: document.getElementById("race").value,
         dob: document.getElementById("dob").value,
       };
-      data.push(registration);
-      saveRegistrations(data);
+
+      registrations.push(registration);
+      saveRegistrations(registrations);
+
       alert("Registration Successful!");
-      form.reset();
+      document.getElementById("registrationForm").reset();
     });
 
     loadEvents();
