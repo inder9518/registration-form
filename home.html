@@ -8,12 +8,15 @@
     body { font-family: Arial, sans-serif; background: #f4f4f9; margin: 0; padding: 0; text-align: center; }
     h1 { margin: 20px 0; }
     .container { width: 90%; margin: auto; }
-    table { border-collapse: collapse; width: 100%; background: #fff; box-shadow: 0px 4px 20px rgba(0,0,0,0.1); }
+    table { border-collapse: collapse; width: 100%; background: #fff; box-shadow: 0px 4px 20px rgba(0,0,0,0.1); margin-bottom: 20px; }
     th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
     th { background: #4facfe; color: white; }
     button { padding: 6px 12px; border: none; background: #4facfe; color: white; font-size: 14px; border-radius: 6px; cursor: pointer; transition: 0.3s; }
     button:hover { background: #007bff; }
     .create-section { background: white; padding: 15px; margin: 20px auto; border-radius: 10px; width: 90%; box-shadow: 0px 4px 20px rgba(0,0,0,0.1); }
+    .data-table-container { margin-top: 15px; }
+    .copy-btn { background: #28a745; margin-bottom: 10px; }
+    .copy-btn:hover { background: #218838; }
   </style>
 </head>
 <body>
@@ -41,8 +44,16 @@
     function getEvents() {
       return JSON.parse(localStorage.getItem("events")) || [];
     }
+
     function saveEvents(events) {
       localStorage.setItem("events", JSON.stringify(events));
+    }
+
+    function getEventData(eventName) {
+      // Dummy data for demo purpose
+      // In real use-case, you can save registration data in localStorage or API
+      const data = JSON.parse(localStorage.getItem("registrations")) || {};
+      return data[eventName] || [];
     }
 
     function addEvent() {
@@ -59,13 +70,6 @@
       document.getElementById("eventDate").value = "";
     }
 
-    function deleteEvent(index) {
-      const events = getEvents();
-      events.splice(index, 1);
-      saveEvents(events);
-      displayEvents();
-    }
-
     function displayEvents() {
       const events = getEvents();
       const table = document.getElementById("eventTable");
@@ -76,10 +80,55 @@
         row.innerHTML = `
           <td>${event.name}</td>
           <td>${event.date}</td>
-          <td><button onclick="deleteEvent(${idx})">Delete</button></td>
+          <td><button onclick="showData('${event.name}', this)">Show Data</button></td>
         `;
         table.appendChild(row);
       });
+    }
+
+    function showData(eventName, btn) {
+      const existing = btn.closest("tr").nextElementSibling;
+      if (existing && existing.classList.contains("data-row")) {
+        existing.remove(); // Toggle hide
+        return;
+      }
+
+      const data = getEventData(eventName);
+      const row = document.createElement("tr");
+      row.classList.add("data-row");
+
+      let tableHTML = `<td colspan="3">
+        <div class="data-table-container">
+          <h3>${eventName} - Total Registrations: ${data.length}</h3>
+          <button class="copy-btn" onclick="copyTable(this)">Copy Data</button>
+          <table>
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${data.map(d => `<tr><td>${d.name}</td><td>${d.email}</td><td>${d.phone}</td></tr>`).join("")}
+            </tbody>
+          </table>
+        </div>
+      </td>`;
+
+      row.innerHTML = tableHTML;
+      btn.closest("tr").after(row);
+    }
+
+    function copyTable(button) {
+      const table = button.nextElementSibling;
+      let range = document.createRange();
+      range.selectNode(table);
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+      document.execCommand("copy");
+      window.getSelection().removeAllRanges();
+      alert("Data copied! You can paste in Excel.");
     }
 
     displayEvents();
